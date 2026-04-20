@@ -1,19 +1,13 @@
-function search(nums, target){
-    let start = nums[0], end = nums.length - 1;
+function index(arr){
+    let max = -1;
 
-    
-    
-    while(start <= end){
-        let mid = Math.floor((nums.length)/2)
-
-        if(mid === target) return mid;
-        else if(nums[mid]<target){
-            start = mid + 1
-        }else{
-            end = mid - 1;
+    for(let i = 0; i<arr.length; i++){
+        if(arr[i]>max){
+            max = arr[i]
         }
     }
-    return -1
+    return max
 }
-let arr = [1,2,3,4,5,6,7]
-console.log(search(arr,5))
+
+console.log(index([2,4,1,5,6,7]))
+
