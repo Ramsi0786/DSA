@@ -1,0 +1,911 @@
+# Data Structures & Algorithms — Pending Topics
+
+## Topics to Complete
+
+- [ ] What is DS and Algorithm
+- [ ] Classification of DS → Primitive and Non-Primitive
+- [ ] Linear and Non-Linear
+- [ ] Classifications of Linear → Linked List
+- [ ] Stack and Queue (understand basics)
+- [ ] Hierarchical Data Structure
+- [ ] Memory Allocation — definition
+- [ ] Memory Leak
+- [ ] Stack Memory and Heap Memory
+- [ ] Contiguous Memory Allocation and Non-Contiguous
+- [ ] Static and Dynamic Memory Allocation
+- [ ] Garbage Collection
+- [ ] Complexity Analysis
+- [ ] Asymptotic Analysis
+- [ ] Linked List → Applications, Advantages and Disadvantages, Types
+- [ ] Arrays — Types of Arrays
+- [ ] Searching Algorithms
+
+
+---
+
+# SECTION 1 — CDN (Content Delivery Network)
+
+## What is a CDN?
+
+A **CDN (Content Delivery Network)** is a **network of servers spread across the world** that delivers content to users from the server that is closest to them.
+
+**Simple words:** Imagine a pizza company. Instead of having one kitchen in Mumbai serving the whole of India, they open kitchens in every city. When you order from Chennai, the Chennai kitchen makes your pizza — it arrives faster. A CDN does the same for websites and data.
+
+**Without CDN:**
+```
+User in Kerala ──────────────────────► Server in USA
+                  (long distance, slow)
+```
+
+**With CDN:**
+```
+User in Kerala ──► CDN Server in Mumbai
+                  (short distance, fast)
+```
+
+## How CDN Works
+
+1. The original content is stored on the **origin server**
+2. CDN copies this content to **edge servers** placed around the world
+3. When a user requests content, the CDN routes them to the **nearest edge server**
+4. The edge server delivers the content quickly
+5. If the edge server doesn't have the content yet, it fetches from origin and caches it for future requests
+
+## What CDN Delivers
+
+- Images, videos, audio files
+- HTML, CSS, JavaScript files
+- Software downloads
+- API responses
+- Live streaming content
+
+## Benefits of CDN
+
+- **Faster load times** — content served from nearby server
+- **Reduced server load** — origin server not overloaded
+- **High availability** — if one server fails, another takes over
+- **DDoS protection** — attack traffic is spread across many servers
+- **Global reach** — works equally fast for users anywhere in the world
+
+## Real-world Examples
+
+- **Netflix** uses CDN to stream videos smoothly worldwide
+- **YouTube** delivers videos via Google's CDN
+- **Amazon CloudFront**, **Cloudflare**, **Akamai** are popular CDN providers
+- Websites use CDN to load libraries like React, Bootstrap faster
+
+## CDN and Data Structures Connection
+
+CDNs internally use:
+- **Hash Tables** — to cache and quickly look up stored content by URL
+- **Trees** — to route requests to the nearest server
+- **Queues** — to manage incoming requests
+
+---
+
+# SECTION 2 — HTTP Versioning
+
+## What is HTTP?
+
+**HTTP (HyperText Transfer Protocol)** is the **communication protocol** used to transfer data between a client (browser) and a server on the internet.
+
+**Simple words:** When you type a URL in your browser, your browser sends an HTTP request to the server. The server replies with an HTTP response containing the webpage. HTTP defines the rules for this communication.
+
+## HTTP Versions — Evolution
+
+### HTTP/1.0 (1996)
+- Each request opens a **new connection** and closes it after the response
+- Very slow — every image, CSS, JS file needs a new connection
+- **One request per connection**
+
+```
+Browser ──connect──► Server ──response──► disconnect
+Browser ──connect──► Server ──response──► disconnect  (for each file!)
+```
+
+### HTTP/1.1 (1997) — Most widely used for years
+- Introduced **persistent connections** — connection stays open for multiple requests
+- Introduced **pipelining** — multiple requests can be sent without waiting for each response
+- But still processes responses **in order** — if one request is slow, everything waits (Head-of-Line blocking)
+
+```
+Browser ──connect──► Server
+         request 1 ──────────► response 1
+         request 2 ──────────► response 2   (same connection)
+         request 3 ──────────► response 3
+```
+
+### HTTP/2 (2015) — Big improvement
+- **Multiplexing** — multiple requests and responses at the same time over one connection, no waiting
+- **Header compression** — reduces data sent by compressing request headers
+- **Server push** — server can send files the browser will need before it even asks
+- **Binary protocol** — data sent as binary instead of text, faster to parse
+- No Head-of-Line blocking at HTTP level
+
+```
+Browser ──connect──► Server
+         request 1 ─────────► response 1 ┐
+         request 2 ─────────► response 2 │ All at same time!
+         request 3 ─────────► response 3 ┘
+```
+
+### HTTP/3 (2022) — Latest
+- Uses **QUIC protocol** instead of TCP — built on UDP
+- **Faster connection setup** — 0-RTT (zero round trip time) for returning users
+- **Better performance on mobile** — handles network switching (WiFi to 4G) without dropping connections
+- Fixes Head-of-Line blocking completely even at transport level
+- Used by Google, Facebook, Cloudflare
+
+## HTTP Versions — Quick Comparison
+
+| Feature | HTTP/1.0 | HTTP/1.1 | HTTP/2 | HTTP/3 |
+|---|---|---|---|---|
+| Year | 1996 | 1997 | 2015 | 2022 |
+| Connection | New per request | Persistent | Persistent | QUIC (UDP) |
+| Multiplexing | No | No | Yes | Yes |
+| Header compression | No | No | Yes | Yes |
+| Server Push | No | No | Yes | Yes |
+| Protocol | Text | Text | Binary | Binary |
+| Speed | Slowest | Slow | Fast | Fastest |
+
+## Simple Memory Tip
+- HTTP/1.0 → One connection, one request, done
+- HTTP/1.1 → Same connection, multiple requests, one by one
+- HTTP/2 → Same connection, all requests at once
+- HTTP/3 → Faster connection, all requests at once, works better on mobile
+
+---
+
+# SECTION 3 — Array vs Linked List (Deep Comparison)
+
+## Memory Layout
+
+**Array — Contiguous Memory:**
+```
+Address: 100  104  108  112  116
+Value:   [10] [20] [30] [40] [50]
+```
+All elements side by side. Address of element = base + (index × size)
+
+**Linked List — Scattered Memory:**
+```
+Address: 100       250       430       610
+Node:   [10|250] [20|430] [30|610] [40|null]
+```
+Each node at a different location, connected by pointers.
+
+## Why Array Access is O(1) but Linked List is O(n)
+
+**Array:**
+- To get element at index 3 → address = 100 + (3 × 4) = 112
+- Jump directly to address 112 — instant!
+
+**Linked List:**
+- To get node at position 3 → start at head (100) → go to 250 → go to 430 → go to 610
+- Must hop through every node one by one — takes O(n) time
+
+## Insert at Beginning
+
+**Array — O(n):**
+```
+Insert 5 at beginning of [10, 20, 30, 40]
+Step 1: Shift 40 → position 4
+Step 2: Shift 30 → position 3
+Step 3: Shift 20 → position 2
+Step 4: Shift 10 → position 1
+Step 5: Place 5 at position 0
+Result: [5, 10, 20, 30, 40]
+— Every element must shift!
+```
+
+**Linked List — O(1):**
+```
+Insert 5 at beginning of 10→20→30→40
+Step 1: Create new node [5]
+Step 2: Set new node's next → head (10)
+Step 3: Update head → new node (5)
+Result: 5→10→20→30→40
+— Only pointers change, no shifting!
+```
+
+## Full Comparison Table
+
+| Feature | Array | Linked List |
+|---|---|---|
+| Memory storage | Contiguous | Scattered |
+| Size | Fixed (static) | Dynamic |
+| Access by index | O(1) — direct | O(n) — traverse |
+| Search | O(n) linear / O(log n) binary | O(n) only |
+| Insert at beginning | O(n) — shift | O(1) — pointer |
+| Insert at end | O(1) | O(n) singly / O(1) doubly |
+| Insert at middle | O(n) — shift | O(n) — find + O(1) insert |
+| Delete at beginning | O(n) — shift | O(1) — pointer |
+| Delete at end | O(1) | O(n) singly / O(1) doubly |
+| Memory per element | Low (no pointer) | High (data + pointer) |
+| Cache performance | Excellent | Poor |
+| Binary search | Possible | Not possible |
+| Use when | Fast access needed | Frequent insert/delete |
+
+---
+
+# SECTION 4 — Types of Memory Allocation (Extra Clarity)
+
+## Three Types of Memory Allocation
+
+Most textbooks mention three types:
+
+### 1. Static Memory Allocation
+- Done at **compile time**
+- Size is **fixed** — cannot change during runtime
+- Stored in **Stack**
+- **Fast** but **inflexible**
+- Example: declaring a fixed-size array, local variables
+
+```js
+let x = 10;           // size fixed — 1 number
+let arr = [1, 2, 3];  // size fixed — 3 elements
+```
+
+### 2. Dynamic Memory Allocation
+- Done at **runtime**
+- Size can **grow or shrink** as needed
+- Stored in **Heap**
+- **Flexible** but needs garbage collection or manual freeing
+- Example: creating objects, pushing to arrays dynamically
+
+```js
+let arr = [];
+arr.push(1);  // grows at runtime
+arr.push(2);  // grows more
+```
+
+### 3. Automatic Memory Allocation
+- Managed **automatically by the language runtime**
+- JavaScript, Python, Java handle this through **Garbage Collection**
+- Programmer does not need to manually allocate or free
+- Contrast with C/C++ where programmer uses malloc() and free() manually
+
+## Memory Allocation — Where Data Lives
+
+```
+┌─────────────────────────────────┐
+│           STACK                 │  ← Local variables, function calls
+│  x = 10                         │     Fast, automatically managed
+│  function call frames           │     Limited size
+├─────────────────────────────────┤
+│           HEAP                  │  ← Objects, arrays, dynamic data
+│  { name: "Arjun" }             │     Slower, garbage collected
+│  [1, 2, 3, 4, 5]               │     Large size
+├─────────────────────────────────┤
+│           CODE SEGMENT          │  ← Your program's instructions
+├─────────────────────────────────┤
+│           DATA SEGMENT          │  ← Global and static variables
+└─────────────────────────────────┘
+```
+
+---
+
+# SECTION 5 — Stack vs Heap Memory (Extra Clarity)
+
+## Stack Memory — Detailed
+
+**Stack** is a region of memory that works like a stack of plates — Last In First Out (LIFO).
+
+- Every time a **function is called**, a new **stack frame** is created and pushed
+- Every time a **function returns**, its stack frame is **popped and freed automatically**
+- Stores: local variables, function parameters, return addresses
+- **Size is limited** — usually 1MB to 8MB depending on the system
+
+```js
+function greet(name) {       // Stack frame for greet() created
+  let message = "Hello";     // message stored in Stack
+  return message + name;
+}                            // Stack frame for greet() destroyed automatically
+```
+
+**Stack growth example:**
+```
+main() called        → [main frame]
+  greet() called     → [main frame] [greet frame]
+    greet() returns  → [main frame]              ← greet frame removed
+  main() returns     →                           ← main frame removed
+```
+
+## Heap Memory — Detailed
+
+**Heap** is a large region of memory used for **dynamic allocation**. No specific order.
+
+- Objects and arrays created with `new` or dynamically go to Heap
+- Memory stays until **garbage collector** frees it (in JS, Java, Python)
+- In C/C++, programmer must manually call `free()` or `delete`
+- **Large size** — can be GBs depending on system RAM
+
+```js
+let obj = { name: "Arjun" };  // obj stored in Heap
+let arr = [1, 2, 3];          // arr stored in Heap
+// Stack only holds the REFERENCE (address) to these Heap objects
+```
+
+## Stack vs Heap — Detailed Comparison
+
+| Feature | Stack | Heap |
+|---|---|---|
+| What is stored | Local variables, function calls | Objects, arrays, dynamic data |
+| Allocation time | Compile time | Runtime |
+| Management | Automatic (by OS) | Manual (C/C++) or GC (JS, Java) |
+| Speed | Very fast | Slightly slower |
+| Size | Small and fixed (1–8 MB) | Large (limited by RAM) |
+| Order | LIFO | No order |
+| Thread | Each thread has its own stack | Shared across all threads |
+| Risk | Stack Overflow | Memory Leak |
+| Lifetime | Until function returns | Until garbage collected or freed |
+
+## Simple Memory Tip
+- **Stack** = fast, small, automatic, function-level data
+- **Heap** = flexible, large, manual/GC, program-level data
+
+---
+
+# SECTION 6 — Linked List Implementation (Full)
+
+## Singly Linked List — Complete Implementation
+
+```js
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+  }
+}
+
+class SinglyLinkedList {
+  constructor() {
+    this.head = null;
+  }
+
+  // Insert at beginning — O(1)
+  insertAtBeginning(data) {
+    let newNode = new Node(data);
+    newNode.next = this.head;
+    this.head = newNode;
+  }
+
+  // Insert at end — O(n)
+  insertAtEnd(data) {
+    let newNode = new Node(data);
+    if (!this.head) {
+      this.head = newNode;
+      return;
+    }
+    let current = this.head;
+    while (current.next) {
+      current = current.next;
+    }
+    current.next = newNode;
+  }
+
+  // Delete by value — O(n)
+  delete(data) {
+    if (!this.head) return;
+    if (this.head.data === data) {
+      this.head = this.head.next;
+      return;
+    }
+    let current = this.head;
+    while (current.next) {
+      if (current.next.data === data) {
+        current.next = current.next.next;
+        return;
+      }
+      current = current.next;
+    }
+  }
+
+  // Search — O(n)
+  search(data) {
+    let current = this.head;
+    let index = 0;
+    while (current) {
+      if (current.data === data) return index;
+      current = current.next;
+      index++;
+    }
+    return -1;
+  }
+
+  // Print all — O(n)
+  print() {
+    let current = this.head;
+    let result = [];
+    while (current) {
+      result.push(current.data);
+      current = current.next;
+    }
+    console.log(result.join(" → "));
+  }
+}
+
+// Usage
+let list = new SinglyLinkedList();
+list.insertAtEnd(10);
+list.insertAtEnd(20);
+list.insertAtEnd(30);
+list.insertAtBeginning(5);
+list.print();        // 5 → 10 → 20 → 30
+list.delete(20);
+list.print();        // 5 → 10 → 30
+console.log(list.search(10)); // 1
+```
+
+## Doubly Linked List — Complete Implementation
+
+```js
+class DNode {
+  constructor(data) {
+    this.data = data;
+    this.next = null;
+    this.prev = null;
+  }
+}
+
+class DoublyLinkedList {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+  }
+
+  // Insert at end — O(1) with tail pointer
+  insertAtEnd(data) {
+    let newNode = new DNode(data);
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+      return;
+    }
+    newNode.prev = this.tail;
+    this.tail.next = newNode;
+    this.tail = newNode;
+  }
+
+  // Insert at beginning — O(1)
+  insertAtBeginning(data) {
+    let newNode = new DNode(data);
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+      return;
+    }
+    newNode.next = this.head;
+    this.head.prev = newNode;
+    this.head = newNode;
+  }
+
+  // Print forward — O(n)
+  printForward() {
+    let current = this.head;
+    let result = [];
+    while (current) {
+      result.push(current.data);
+      current = current.next;
+    }
+    console.log("Forward: " + result.join(" ↔ "));
+  }
+
+  // Print backward — O(n)
+  printBackward() {
+    let current = this.tail;
+    let result = [];
+    while (current) {
+      result.push(current.data);
+      current = current.prev;
+    }
+    console.log("Backward: " + result.join(" ↔ "));
+  }
+}
+
+// Usage
+let dlist = new DoublyLinkedList();
+dlist.insertAtEnd(10);
+dlist.insertAtEnd(20);
+dlist.insertAtEnd(30);
+dlist.insertAtBeginning(5);
+dlist.printForward();   // Forward: 5 ↔ 10 ↔ 20 ↔ 30
+dlist.printBackward();  // Backward: 30 ↔ 20 ↔ 10 ↔ 5
+```
+
+---
+
+# SECTION 7 — Complexity Extra Clarity
+
+## How to Read Complexity — Step by Step Rules
+
+### Rule 1 — Single statement = O(1)
+```js
+let x = 5;           // O(1)
+let y = arr[3];      // O(1)
+let z = a + b;       // O(1)
+```
+
+### Rule 2 — Single loop = O(n)
+```js
+for (let i = 0; i < n; i++) {
+  console.log(i);    // runs n times → O(n)
+}
+```
+
+### Rule 3 — Nested loops = O(n²)
+```js
+for (let i = 0; i < n; i++) {       // n times
+  for (let j = 0; j < n; j++) {     // n times for each i
+    console.log(i, j);              // n × n = O(n²)
+  }
+}
+```
+
+### Rule 4 — Loop that halves = O(log n)
+```js
+for (let i = n; i > 1; i = Math.floor(i / 2)) {
+  console.log(i);    // n → n/2 → n/4 → ... → 1 = log n steps
+}
+```
+
+### Rule 5 — Two separate loops = O(n) not O(2n)
+```js
+for (let i = 0; i < n; i++) { }   // O(n)
+for (let j = 0; j < n; j++) { }   // O(n)
+// Total = O(n + n) = O(2n) → drop constant → O(n)
+```
+
+## Complexity Quick Reference with Real Feeling
+
+| Complexity | Name | n=10 | n=100 | n=1000 | Feel |
+|---|---|---|---|---|---|
+| O(1) | Constant | 1 | 1 | 1 | Instant always |
+| O(log n) | Logarithmic | 3 | 7 | 10 | Almost instant |
+| O(n) | Linear | 10 | 100 | 1000 | Grows with input |
+| O(n log n) | Linearithmic | 30 | 700 | 10000 | Slightly heavy |
+| O(n²) | Quadratic | 100 | 10000 | 1000000 | Gets slow fast |
+| O(2ⁿ) | Exponential | 1024 | 💀 | 💀💀 | Unusable for large n |
+
+---
+
+# SECTION 8 — Asymptotic Notations Extra Clarity
+
+## The Three Notations — Simplified with One Example
+
+**Example — Linear Search on array of n elements:**
+
+```
+Best case:  Element at index 0 → 1 step     → Ω(1)
+Worst case: Element at last or not found → n steps → O(n)
+Average:    Element somewhere in middle → n/2 steps → Θ(n)
+```
+
+## Visual Understanding
+
+```
+Time
+ │                           O(n²) ← worst possible bound
+ │                    O(n)   ← actual algorithm growth
+ │             Θ(n)   ← tight bound (same as actual)
+ │      Ω(1)   ← best possible bound
+ │
+ └──────────────────────────────── n (input size)
+
+O  = ceiling — algorithm never goes ABOVE this
+Ω  = floor   — algorithm never goes BELOW this
+Θ  = when ceiling and floor are the same growth rate
+```
+
+## Common Algorithms — All Three Notations
+
+| Algorithm | Ω (Best) | Θ (Average) | O (Worst) |
+|---|---|---|---|
+| Linear Search | Ω(1) | Θ(n) | O(n) |
+| Binary Search | Ω(1) | Θ(log n) | O(log n) |
+| Bubble Sort | Ω(n) | Θ(n²) | O(n²) |
+| Merge Sort | Ω(n log n) | Θ(n log n) | O(n log n) |
+| Quick Sort | Ω(n log n) | Θ(n log n) | O(n²) |
+| Insertion Sort | Ω(n) | Θ(n²) | O(n²) |
+
+---
+
+# SECTION 9 — Recursion Clarity
+
+## How Recursion Actually Flows — Visual
+
+```
+factorial(4)
+│
+├── returns 4 × factorial(3)
+│              │
+│              ├── returns 3 × factorial(2)
+│              │              │
+│              │              ├── returns 2 × factorial(1)
+│              │              │              │
+│              │              │              └── returns 1  ← BASE CASE
+│              │              │
+│              │              └── 2 × 1 = 2
+│              │
+│              └── 3 × 2 = 6
+│
+└── 4 × 6 = 24  ← FINAL ANSWER
+```
+
+## The Golden Rules of Recursion
+
+1. **Always have a base case** — without it, infinite recursion → Stack Overflow
+2. **Each call must move towards base case** — input must get smaller each time
+3. **Trust the recursion** — assume the recursive call returns the correct answer
+
+## Common Mistake — Missing Base Case
+```js
+// WRONG — no base case, infinite recursion!
+function sum(n) {
+  return n + sum(n - 1);  // never stops!
+}
+
+// CORRECT — with base case
+function sum(n) {
+  if (n === 0) return 0;  // base case
+  return n + sum(n - 1);  // recursive case
+}
+```
+
+---
+
+# SECTION 10 — Iteration vs Recursion (Deep Comparison)
+
+## Same Problem — Two Approaches
+
+**Problem: Find factorial of n**
+
+### Iterative Approach
+```js
+function factorialIterative(n) {
+  let result = 1;
+  for (let i = 1; i <= n; i++) {
+    result = result * i;
+  }
+  return result;
+}
+console.log(factorialIterative(5)); // 120
+```
+
+**How it runs:**
+```
+i=1: result = 1 × 1 = 1
+i=2: result = 1 × 2 = 2
+i=3: result = 2 × 3 = 6
+i=4: result = 6 × 4 = 24
+i=5: result = 24 × 5 = 120
+Done!
+```
+
+### Recursive Approach
+```js
+function factorialRecursive(n) {
+  if (n === 0) return 1;
+  return n * factorialRecursive(n - 1);
+}
+console.log(factorialRecursive(5)); // 120
+```
+
+**How it runs:**
+```
+factorialRecursive(5)
+= 5 × factorialRecursive(4)
+= 5 × 4 × factorialRecursive(3)
+= 5 × 4 × 3 × factorialRecursive(2)
+= 5 × 4 × 3 × 2 × factorialRecursive(1)
+= 5 × 4 × 3 × 2 × 1 × factorialRecursive(0)
+= 5 × 4 × 3 × 2 × 1 × 1
+= 120
+```
+
+## Iteration vs Recursion — Full Comparison
+
+| Feature | Iteration | Recursion |
+|---|---|---|
+| Uses | Loop (for/while) | Function calling itself |
+| Memory | O(1) — no call stack | O(n) — call stack grows |
+| Speed | Faster | Slightly slower (function call overhead) |
+| Risk | Infinite loop | Stack Overflow |
+| Stop condition | Loop condition false | Base case reached |
+| Readability | Better for simple tasks | Better for complex/nested problems |
+| Code length | Sometimes longer | Usually shorter |
+| Best for | Simple repetition | Trees, graphs, divide & conquer |
+
+## When to Choose Which
+
+**Use Iteration when:**
+- Simple counting or looping
+- Memory efficiency is important
+- Performance is critical
+- No natural recursive structure
+
+**Use Recursion when:**
+- Problem has a naturally self-similar structure
+- Working with Trees, Graphs
+- Implementing Merge Sort, Quick Sort
+- Writing cleaner and more readable code for complex problems
+
+---
+
+# SECTION 11 — Sum of Array Using Recursion
+
+## Problem: Find sum of all elements in an array
+
+**Array:** [1, 2, 3, 4, 5] → Sum = 15
+
+## Thinking Recursively
+
+**Big problem:** Sum of [1, 2, 3, 4, 5]
+= first element + Sum of rest
+= 1 + Sum of [2, 3, 4, 5]
+= 1 + 2 + Sum of [3, 4, 5]
+= 1 + 2 + 3 + Sum of [4, 5]
+= 1 + 2 + 3 + 4 + Sum of [5]
+= 1 + 2 + 3 + 4 + 5 + Sum of []
+= 1 + 2 + 3 + 4 + 5 + 0  ← base case (empty array)
+= 15
+
+## Code — Sum of Array Using Recursion
+
+```js
+function sumArray(arr, index = 0) {
+  // Base case — reached end of array
+  if (index === arr.length) return 0;
+
+  // Recursive case — current element + sum of rest
+  return arr[index] + sumArray(arr, index + 1);
+}
+
+let arr = [1, 2, 3, 4, 5];
+console.log(sumArray(arr)); // 15
+console.log(sumArray([10, 20, 30])); // 60
+console.log(sumArray([])); // 0
+```
+
+## Step by Step Trace
+
+```
+sumArray([1,2,3,4,5], 0)
+= 1 + sumArray([1,2,3,4,5], 1)
+      = 2 + sumArray([1,2,3,4,5], 2)
+            = 3 + sumArray([1,2,3,4,5], 3)
+                  = 4 + sumArray([1,2,3,4,5], 4)
+                        = 5 + sumArray([1,2,3,4,5], 5)
+                                   = 0  ← base case
+                        = 5 + 0 = 5
+                  = 4 + 5 = 9
+            = 3 + 9 = 12
+      = 2 + 12 = 14
+= 1 + 14 = 15 ← final answer
+```
+
+## Complexity
+- **Time:** O(n) — visits each element once
+- **Space:** O(n) — n stack frames in call stack
+
+---
+
+# SECTION 12 — Binary Search Using Recursion (Extra Clarity)
+
+## Step by Step with Full Trace
+
+**Array:** [10, 20, 30, 40, 50, 60, 70] — Search for 50
+
+```
+binarySearch(arr, 50, 0, 6)
+  low=0, high=6, mid=3 → arr[3]=40
+  40 < 50 → search right half
+  binarySearch(arr, 50, 4, 6)
+    low=4, high=6, mid=5 → arr[5]=60
+    60 > 50 → search left half
+    binarySearch(arr, 50, 4, 4)
+      low=4, high=4, mid=4 → arr[4]=50
+      50 === 50 → FOUND at index 4!
+```
+
+## Code — Binary Search Using Recursion
+
+```js
+function binarySearch(arr, target, low = 0, high = arr.length - 1) {
+  // Base case 1 — not found
+  if (low > high) return -1;
+
+  let mid = Math.floor((low + high) / 2);
+
+  // Base case 2 — found
+  if (arr[mid] === target) return mid;
+
+  // Recursive case — search left or right half
+  if (arr[mid] < target) {
+    return binarySearch(arr, target, mid + 1, high); // go right
+  } else {
+    return binarySearch(arr, target, low, mid - 1);  // go left
+  }
+}
+
+let arr = [10, 20, 30, 40, 50, 60, 70];
+console.log(binarySearch(arr, 50)); // 4
+console.log(binarySearch(arr, 25)); // -1
+console.log(binarySearch(arr, 10)); // 0
+console.log(binarySearch(arr, 70)); // 6
+```
+
+## Complexity
+- **Time:** O(log n) — halves the array each call
+- **Space:** O(log n) — log n stack frames in call stack
+
+---
+
+## Quick Revision Table
+
+| Topic | Key Point |
+|---|---|
+| CDN | Network of servers worldwide delivering content from nearest server |
+| HTTP/1.0 | New connection per request — slowest |
+| HTTP/1.1 | Persistent connection — one by one |
+| HTTP/2 | Multiplexing — all requests at once |
+| HTTP/3 | QUIC protocol — fastest, best on mobile |
+| Array vs Linked List | Array = fast access, Linked List = fast insert/delete |
+| Stack Memory | Fast, small, automatic, stores local variables |
+| Heap Memory | Flexible, large, GC managed, stores objects |
+| Static Allocation | Fixed size at compile time → Stack |
+| Dynamic Allocation | Flexible size at runtime → Heap |
+| Linked List Implementation | Node class + LinkedList class with head pointer |
+| O(1) | Constant — same time always |
+| O(log n) | Logarithmic — halving each step |
+| O(n) | Linear — grows with input |
+| O(n²) | Quadratic — loop inside loop |
+| Big O | Worst case upper bound |
+| Big Omega | Best case lower bound |
+| Big Theta | Tight bound — best and worst same |
+| Recursion | Function calling itself — needs base case + recursive case |
+| Iteration | Solving with loop — O(1) space, faster |
+| Sum of array (recursion) | arr[i] + sumArray(arr, i+1), base: index === length |
+| Binary Search (recursion) | Halve array each call, base: low > high or found |
+
+---
+
+## Viva Q&A
+
+**Q1. What is a CDN and why is it used?**
+A CDN or Content Delivery Network is a network of servers distributed across the world that delivers content to users from the server closest to them. It is used to make websites load faster, reduce the load on the origin server, improve availability, and provide DDoS protection.
+
+**Q2. What is the main difference between HTTP/1.1 and HTTP/2?**
+HTTP/1.1 uses persistent connections but processes requests one by one, causing Head-of-Line blocking where a slow request delays all others. HTTP/2 introduces multiplexing which allows multiple requests and responses to travel simultaneously over a single connection, eliminating this bottleneck and making it significantly faster.
+
+**Q3. What is HTTP/3 and what makes it different?**
+HTTP/3 is the latest version of HTTP that uses QUIC protocol built on UDP instead of TCP. It offers faster connection setup with zero round trip time for returning users, handles network switching without dropping connections, and eliminates Head-of-Line blocking completely at the transport level.
+
+**Q4. Why is array access O(1) but linked list access O(n)?**
+Array elements are stored in contiguous memory. The address of any element is calculated directly using base address plus index multiplied by element size, allowing instant access. In a linked list, elements are scattered in memory and connected by pointers. To reach any element, we must traverse from the head and follow pointers one by one, which takes O(n) time.
+
+**Q5. Why is insertion at the beginning O(1) in linked list but O(n) in array?**
+In a linked list, we only need to create a new node, point it to the current head, and update head to the new node. No elements are moved. In an array, all existing elements must shift one position to the right to make space for the new element, which takes O(n) time.
+
+**Q6. What is the difference between Stack and Heap memory?**
+Stack memory is small, fast, and automatically managed by the OS. It stores local variables and function call frames in LIFO order and is freed automatically when a function returns. Heap memory is large, flexible, and managed by the garbage collector or manually by the programmer. It stores dynamically created objects and arrays and remains until explicitly freed or garbage collected.
+
+**Q7. What are the three types of memory allocation?**
+Static memory allocation happens at compile time with fixed size and is stored in the Stack. Dynamic memory allocation happens at runtime with flexible size and is stored in the Heap. Automatic memory allocation is handled by the language runtime through garbage collection, as in JavaScript, Java, and Python.
+
+**Q8. What is the difference between Iteration and Recursion?**
+Iteration uses loops like for or while and solves problems with O(1) space. Recursion uses a function that calls itself and uses O(n) space due to the call stack. Iteration is faster and more memory efficient. Recursion is more readable and natural for problems with self-similar structure like tree traversal and divide and conquer algorithms.
+
+**Q9. Explain sum of array using recursion.**
+We define the sum of an array as the first element plus the sum of the remaining elements. The base case is when the index reaches the length of the array, returning 0. The recursive case returns arr[index] plus sumArray(arr, index + 1). This visits each element once giving O(n) time complexity and O(n) space for the call stack.
+
+**Q10. Why does recursive Binary Search have O(log n) space complexity?**
+Because each recursive call creates a new stack frame in the call stack. Binary Search halves the array at each step, so it makes at most log n recursive calls. Each call adds one frame to the stack, resulting in O(log n) space. The iterative version avoids this by using a loop instead, giving O(1) space.
+
+**Q11. What are the three asymptotic notations and what do they represent?**
+Big O represents the worst case or upper bound — the maximum time an algorithm can take. Big Omega represents the best case or lower bound — the minimum time possible. Big Theta represents the tight bound — used when the algorithm always grows at the same rate regardless of input, meaning best and worst case have the same growth.
+
+**Q12. What is the difference between O(n) and O(n²) with a practical example?**
+O(n) means time grows linearly. For 1000 elements it takes 1000 steps. O(n²) means time grows as the square of input. For 1000 elements it takes 1,000,000 steps. O(n) is a single loop and O(n²) is a nested loop. Bubble sort with O(n²) is 1000 times slower than linear search with O(n) for 1000 elements.
+
+---
